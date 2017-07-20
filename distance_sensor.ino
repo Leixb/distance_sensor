@@ -36,9 +36,9 @@ uint16_t read_distance() {
 void command_heartbeat() {
 
     //< ID 1 for this system
-    int sysid = 1;                   
+    int sysid = 1;
     //< The component sending the message.
-    int compid = MAV_COMP_ID_MISSIONPLANNER;    
+    int compid = MAV_COMP_ID_MISSIONPLANNER;
 
     // Define the system type, in this case ground control station
     uint8_t     system_type = MAV_TYPE_GCS;
@@ -101,7 +101,7 @@ void command_distance(const uint16_t distance, const MAV_SENSOR_ORIENTATION sens
 
     // Copy the message to the send buffer
     uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
-    // Send the message (.write sends as bytes) 
+    // Send the message (.write sends as bytes)
     delay(1000);
     Serial.write(buf, len);
 }
