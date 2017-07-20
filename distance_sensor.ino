@@ -4,14 +4,17 @@
 //Baudrate
 #define bRate 115200
 
+//TODO: sysid and compid
+
 void setup() {
+    // TODO: initialize analgo ports for reading
     Serial.begin(bRate);
 }
 
 void loop() {
     command_heartbeat();
     uint16_t distance = read_distance();
-    command_distance(distance, MAV_SENSOR_ROTATION_NONE);
+    command_distance(distance, MAV_SENSOR_ROTATION_NONE); // TODO: send distance for all 4 orientations
 }
 
 /************************************************************
@@ -79,7 +82,7 @@ void command_distance(const uint16_t distance, const MAV_SENSOR_ORIENTATION sens
     uint16_t seq = 0; // Sequence is always set to 0
     uint8_t frame = MAV_FRAME_GLOBAL; // Set target frame to global default
 
-    const uint32_t    time_boot_ms        = 0;                  // Time since system boot
+    const uint32_t    time_boot_ms        = 0;     //TODO       // Time since system boot
     const uint16_t    min_distance        = 50;                 // Minimum distance the sensor can measure in centimeters
     const uint16_t    max_distance        = 500;                // Maximum distance the sensor can measure in centimeters
 
@@ -102,6 +105,6 @@ void command_distance(const uint16_t distance, const MAV_SENSOR_ORIENTATION sens
     // Copy the message to the send buffer
     uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
     // Send the message (.write sends as bytes)
-    delay(1000);
+    delay(1000); // TODO: reduce delay
     Serial.write(buf, len);
 }
