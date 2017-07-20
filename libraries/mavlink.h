@@ -7,7 +7,7 @@
 #define MAVLINK_H
 
 #ifndef MAVLINK_STX
-#define MAVLINK_STX 254
+#define MAVLINK_STX 253
 #endif
 
 #ifdef __cplusplus
