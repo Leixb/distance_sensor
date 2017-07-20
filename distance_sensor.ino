@@ -1,6 +1,4 @@
 //include the mavlink library
-//#include "./libraries/mavlink/include/mavlink.h"
-//#include <mavlink.h>
 #include "./libraries/mavlink.h"
 
 //Baudrate
@@ -23,7 +21,9 @@ void loop() {
  *************************************************************/
 
 uint16_t read_distance() {
-    // placeholder
+
+    // TODO: implementation
+
     return 100;
 }
 
@@ -65,7 +65,8 @@ void command_heartbeat() {
 
 /************************************************************
  * @brief Sends distance command
- * @param distance reading
+ * @param1 Distance reading
+ * @param2 Sensor orientation
  * @return void
  *************************************************************/
 
