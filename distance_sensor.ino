@@ -64,7 +64,7 @@ void command_heartbeat() {
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 
     // Pack the message
-    mavlink_msg_heartbeat_pack(system_id, component_id, msg, type, autopilot, base_mode, custom_mode, system_status);
+    mavlink_msg_heartbeat_pack(system_id, component_id, &msg, type, autopilot, base_mode, custom_mode, system_status);
 
     // Copy the message to the send buffer
     uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
