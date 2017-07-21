@@ -22,6 +22,7 @@ void loop() {
     /*command_heartbeat();*/
     uint16_t distance = ping(TriggerPin, EchoPin);
     command_distance(distance, MAV_SENSOR_ROTATION_NONE); // TODO: send distance for all 4 orientations
+    delay(1000);
 }
 
 /************************************************************
@@ -48,7 +49,7 @@ void command_heartbeat() {
     //< ID 1 for this system
     int system_id = 1;
     //< The component sending the message.
-    int component_id = MAV_COMP_ID_MISSIONPLANNER;
+    int component_id = MAV_COMP_ID_PERIPHERAL;
 
     // Define the system type, in this case ground control station
     uint8_t     type            = MAV_TYPE_GCS;
@@ -69,7 +70,6 @@ void command_heartbeat() {
     uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
 
     // Send the message 
-    delay(1000);
     Serial.write(buf, len);
 }
 
@@ -109,7 +109,6 @@ void command_distance(const uint16_t distance, const MAV_SENSOR_ORIENTATION sens
     // Copy the message to the send buffer
     uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
     // Send the message (.write sends as bytes)
-    delay(1000); // TODO: reduce delay
     Serial.write(buf, len);
 }
 
