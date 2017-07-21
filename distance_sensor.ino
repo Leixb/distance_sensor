@@ -82,7 +82,7 @@ void command_distance(const uint16_t distance, const MAV_SENSOR_ORIENTATION sens
     uint16_t seq = 0; // Sequence is always set to 0
     uint8_t frame = MAV_FRAME_GLOBAL; // Set target frame to global default
 
-    const uint32_t    time_boot_ms        = 0;     //TODO       // Time since system boot
+    const uint32_t    time_boot_ms        = millis();           // Time since system boot
     const uint16_t    min_distance        = 50;                 // Minimum distance the sensor can measure in centimeters
     const uint16_t    max_distance        = 500;                // Maximum distance the sensor can measure in centimeters
 
