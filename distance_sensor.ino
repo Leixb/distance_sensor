@@ -19,9 +19,8 @@ void setup() {
 }
 
 void loop() {
-    int cm = ping(TriggerPin, EchoPin);
-    command_heartbeat();
-    uint16_t distance = read_distance();
+    /*command_heartbeat();*/
+    uint16_t distance = ping(TriggerPin, EchoPin);
     command_distance(distance, MAV_SENSOR_ROTATION_NONE); // TODO: send distance for all 4 orientations
 }
 
@@ -86,9 +85,6 @@ void command_distance(const uint16_t distance, const MAV_SENSOR_ORIENTATION sens
     //TARGET DRONE
     uint8_t system_id = 1;    // Target drone id
     uint8_t component_id = 0; // Target component, 0 = all
-
-    uint16_t seq = 0; // Sequence is always set to 0
-    uint8_t frame = MAV_FRAME_GLOBAL; // Set target frame to global default
 
     const uint32_t    time_boot_ms        = millis();           // Time since system boot
     const uint16_t    min_distance        = 50;                 // Minimum distance the sensor can measure in centimeters
