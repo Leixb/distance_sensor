@@ -83,17 +83,17 @@ void command_heartbeat() {
 void command_distance(const uint16_t distance, const MAV_SENSOR_ORIENTATION sensor_rotation) {
 
     //TARGET DRONE
-    uint8_t system_id = 1;    // Target drone id
-    uint8_t component_id = 0; // Target component, 0 = all
+    uint8_t system_id = 1;                              // Target drone id
+    uint8_t component_id = MAV_COMP_ID_PATHPLANNER;     // Target component
 
-    const uint32_t    time_boot_ms        = millis();           // Time since system boot
+    uint32_t          time_boot_ms        = millis();           // Time since system boot
     const uint16_t    min_distance        = 50;                 // Minimum distance the sensor can measure in centimeters
     const uint16_t    max_distance        = 500;                // Maximum distance the sensor can measure in centimeters
 
     uint16_t    current_distance    = distance;                 // Current distance reading
 
     const uint8_t     type = MAV_DISTANCE_SENSOR_ULTRASOUND;    // Type from MAV_DISTANCE_SENSOR enum.
-    const uint8_t     id   = 0;                                 // Onboard ID of the sensor
+    const uint8_t     id   = 0;    // Ignored by pixhawk        // Onboard ID of the sensor
 
     uint8_t     orientation = sensor_rotation;                  // Direction the sensor faces from MAV_SENSOR_ORIENTATION enum.
 
