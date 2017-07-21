@@ -4,14 +4,22 @@
 //Baudrate
 #define bRate 115200
 
+const int EchoPin = 5;
+const int TriggerPin = 6;
+const int LedPin = 13;
+
 //TODO: sysid and compid
 
 void setup() {
     // TODO: initialize analgo ports for reading
+    pinMode(LedPin, OUTPUT);
+    pinMode(TriggerPin, OUTPUT);
+    pinMode(EchoPin, INPUT);
     Serial.begin(bRate);
 }
 
 void loop() {
+    int cm = ping(TriggerPin, EchoPin);
     command_heartbeat();
     uint16_t distance = read_distance();
     command_distance(distance, MAV_SENSOR_ROTATION_NONE); // TODO: send distance for all 4 orientations
@@ -58,8 +66,8 @@ void command_heartbeat() {
     // Pack the message
     mavlink_msg_heartbeat_pack(system_id, component_id, msg, type, autopilot, base_mode, custom_mode, system_status)
 
-    // Copy the message to the send buffer
-    uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+        // Copy the message to the send buffer
+        uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
 
     // Send the message 
     delay(1000);
@@ -107,4 +115,19 @@ void command_distance(const uint16_t distance, const MAV_SENSOR_ORIENTATION sens
     // Send the message (.write sends as bytes)
     delay(1000); // TODO: reduce delay
     Serial.write(buf, len);
+}
+
+int ping(int TriggerPin, int EchoPin) {
+    long duration, distanceCm;
+
+    digitalWrite(TriggerPin, LOW);  //para generar un pulso limpio ponemos a LOW 4us
+    delayMicroseconds(4);
+    digitalWrite(TriggerPin, HIGH);  //generamos Trigger (disparo) de 10us
+    delayMicroseconds(10);
+    digitalWrite(TriggerPin, LOW);
+
+    duration = pulseIn(EchoPin, HIGH);  //medimos el tiempo entre pulsos, en microsegundos
+
+    distanceCm = duration * 10 / 292/ 2;   //convertimos a distancia, en cm
+    return distanceCm;
 }
