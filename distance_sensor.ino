@@ -5,9 +5,9 @@
 #define bRate 115200
 
 // TODO: 4 different ultrasonic sensor pins
-const short EchoPin = 5;
-const short TriggerPin = 6;
-const short LedPin = 13;
+const uint8_t EchoPin = 5;
+const uint8_t TriggerPin = 6;
+const uint8_t LedPin = 13;
 
 //TODO: heartbeat needed?
 
@@ -120,8 +120,8 @@ void command_distance(const uint16_t& current_distance, const MAV_SENSOR_ORIENTA
  * @return distance (cm)
  *************************************************************/
 
-uint16_t ping(const short& TriggerPin, const short& EchoPin) {
-    unsigned long duration; 
+uint16_t ping(const uint8_t& TriggerPin, const uint8_t& EchoPin) {
+    unsigned long duration;
 
     // To generate a clean pulse we put LOW during 4us
     digitalWrite(TriggerPin, LOW);
