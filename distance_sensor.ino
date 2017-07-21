@@ -4,14 +4,15 @@
 //Baudrate
 #define bRate 115200
 
+// TODO: 4 different ultrasonic sensor pins
 const int EchoPin = 5;
 const int TriggerPin = 6;
 const int LedPin = 13;
 
-//TODO: sysid and compid
+//TODO: heartbeat needed?
 
 void setup() {
-    // TODO: initialize analgo ports for reading
+    // TODO: initialize missing analog ports for reading
     pinMode(LedPin, OUTPUT);
     pinMode(TriggerPin, OUTPUT);
     pinMode(EchoPin, INPUT);
@@ -23,19 +24,6 @@ void loop() {
     uint16_t distance = ping(TriggerPin, EchoPin);
     command_distance(distance, MAV_SENSOR_ROTATION_NONE); // TODO: send distance for all 4 orientations
     delay(1000);
-}
-
-/************************************************************
- * @brief Reads distance from sensor
- * @param NONE
- * @return distance
- *************************************************************/
-
-uint16_t read_distance() {
-
-    // TODO: implementation
-
-    return 100;
 }
 
 /************************************************************
