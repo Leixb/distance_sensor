@@ -5,9 +5,9 @@
 #define bRate 115200
 
 // TODO: 4 different ultrasonic sensor pins
-const int EchoPin = 5;
-const int TriggerPin = 6;
-const int LedPin = 13;
+const short EchoPin = 5;
+const short TriggerPin = 6;
+const short LedPin = 13;
 
 //TODO: heartbeat needed?
 
@@ -22,7 +22,8 @@ void setup() {
 void loop() {
     /*command_heartbeat();*/
     uint16_t distance = ping(TriggerPin, EchoPin);
-    command_distance(distance, MAV_SENSOR_ROTATION_NONE); // TODO: send distance for all 4 orientations
+    command_distance(distance, MAV_SENSOR_ROTATION_NONE); 
+    // TODO: send distance for all 4 orientations
     delay(1000);
 }
 
@@ -52,7 +53,8 @@ void command_heartbeat() {
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 
     // Pack the message
-    mavlink_msg_heartbeat_pack(system_id, component_id, &msg, type, autopilot, base_mode, custom_mode, system_status);
+    mavlink_msg_heartbeat_pack(system_id, component_id, &msg, type, autopilot, \
+            base_mode, custom_mode, system_status);
 
     // Copy the message to the send buffer
     uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -68,31 +70,42 @@ void command_heartbeat() {
  * @return void
  *************************************************************/
 
-void command_distance(const uint16_t distance, const MAV_SENSOR_ORIENTATION sensor_rotation) {
+void command_distance(const uint16_t& current_distance, const MAV_SENSOR_ORIENTATION& orientation) {
 
-    //TARGET DRONE
-    uint8_t system_id = 1;                              // Target drone id
-    uint8_t component_id = MAV_COMP_ID_PATHPLANNER;     // Target component
+    // Target drone id
+    const uint8_t   system_id       = 1;
+    // Target component
+    const uint8_t   component_id    = MAV_COMP_ID_PATHPLANNER;
 
-    uint32_t          time_boot_ms        = millis();           // Time since system boot
-    const uint16_t    min_distance        = 50;                 // Minimum distance the sensor can measure in centimeters
-    const uint16_t    max_distance        = 500;                // Maximum distance the sensor can measure in centimeters
+    // Time since system boot
+    const uint32_t  time_boot_ms    = millis();
+    // Minimum distance the sensor can measure in centimeters
+    const uint16_t  min_distance    = 50;
+    // Maximum distance the sensor can measure in centimeters
+    const uint16_t  max_distance    = 500;
 
-    uint16_t    current_distance    = distance;                 // Current distance reading
+    // @param1 current_distance = Distance reading in centimetres
 
-    const uint8_t     type = MAV_DISTANCE_SENSOR_ULTRASOUND;    // Type from MAV_DISTANCE_SENSOR enum.
-    const uint8_t     id   = 0;    // Ignored by pixhawk        // Onboard ID of the sensor
+    // type and id are IGNORED by pixhawk
+    // Type from MAV_DISTANCE_SENSOR enum.
+    const uint8_t   type            = MAV_DISTANCE_SENSOR_ULTRASOUND;
+    // Onboard ID of the sensor
+    const uint8_t   id              = 0;
 
-    uint8_t     orientation = sensor_rotation;                  // Direction the sensor faces from MAV_SENSOR_ORIENTATION enum.
+    // @param2 orientation = Direction the sensor faces MAV_SENSOR_ORIENTATION
 
-    const uint8_t     covariance  = 0;                          // Measurement covariance in centimeters, 0 for unknown / invalid readings
+    // covariance is ignored by pihawk
+    // Measurement covariance in centimeters, 0 for unknown / invalid readings
+    const uint8_t   covariance      = 0;
 
     // Initialize the required buffers
     mavlink_message_t msg;
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 
     // Pack the message
-    mavlink_msg_distance_sensor_pack(system_id, component_id, &msg, time_boot_ms, min_distance, max_distance, current_distance, type, id, orientation, covariance);
+    mavlink_msg_distance_sensor_pack(system_id, component_id, &msg, \
+            time_boot_ms, min_distance, max_distance, \
+            current_distance, type, id, orientation, covariance);
 
     // Copy the message to the send buffer
     uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
@@ -107,17 +120,19 @@ void command_distance(const uint16_t distance, const MAV_SENSOR_ORIENTATION sens
  * @return distance (cm)
  *************************************************************/
 
-int ping(int TriggerPin, int EchoPin) {
-    long duration, distanceCm;
+uint16_t ping(const short& TriggerPin, const short& EchoPin) {
+    unsigned long duration; 
 
-    digitalWrite(TriggerPin, LOW);          // To generate a clean pulse we put LOW during 4us
+    // To generate a clean pulse we put LOW during 4us
+    digitalWrite(TriggerPin, LOW);
     delayMicroseconds(4);
-    digitalWrite(TriggerPin, HIGH);         // Generate Trigger of 10us
+    // Generate Trigger of 10us
+    digitalWrite(TriggerPin, HIGH);
     delayMicroseconds(10);
     digitalWrite(TriggerPin, LOW);
 
-    duration = pulseIn(EchoPin, HIGH);      // Time between pulses in ms
+    // Time between pulses in ms
+    duration = pulseIn(EchoPin, HIGH);
 
-    distanceCm = duration * 10 / 292/ 2;    // Convert distance to cm
-    return distanceCm;
+    return (duration * 5)/292; // Convert distance to cm (10/292/2)
 }
