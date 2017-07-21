@@ -39,24 +39,24 @@ uint16_t read_distance() {
 void command_heartbeat() {
 
     //< ID 1 for this system
-    int sysid = 1;
+    int system_id = 1;
     //< The component sending the message.
-    int compid = MAV_COMP_ID_MISSIONPLANNER;
+    int component_id = MAV_COMP_ID_MISSIONPLANNER;
 
     // Define the system type, in this case ground control station
-    uint8_t     system_type = MAV_TYPE_GCS;
-    uint8_t     autopilot_type = MAV_AUTOPILOT_INVALID;
+    uint8_t     type            = MAV_TYPE_GCS;
+    uint8_t     autopilot       = MAV_AUTOPILOT_INVALID;
 
-    uint8_t     system_mode     = 0;
+    uint8_t     base_mode       = 0;
     uint32_t    custom_mode     = 0;
-    uint8_t     system_state    = 0;
+    uint8_t     system_status   = 0;
 
     // Initialize the required buffers
     mavlink_message_t msg;
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 
     // Pack the message
-    mavlink_msg_heartbeat_pack(sysid,compid, &msg, system_type, autopilot_type, system_mode, custom_mode, system_state);
+    mavlink_msg_heartbeat_pack(system_id, component_id, msg, type, autopilot, base_mode, custom_mode, system_status)
 
     // Copy the message to the send buffer
     uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
