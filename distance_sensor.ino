@@ -112,17 +112,24 @@ void command_distance(const uint16_t distance, const MAV_SENSOR_ORIENTATION sens
     Serial.write(buf, len);
 }
 
+/************************************************************
+ * @brief  Reads ultrasound sensor distance
+ * @param1 Trigger PIN
+ * @param2 Echo PIN
+ * @return distance (cm)
+ *************************************************************/
+
 int ping(int TriggerPin, int EchoPin) {
     long duration, distanceCm;
 
-    digitalWrite(TriggerPin, LOW);  //para generar un pulso limpio ponemos a LOW 4us
+    digitalWrite(TriggerPin, LOW);          // To generate a clean pulse we put LOW during 4us
     delayMicroseconds(4);
-    digitalWrite(TriggerPin, HIGH);  //generamos Trigger (disparo) de 10us
+    digitalWrite(TriggerPin, HIGH);         // Generate Trigger of 10us
     delayMicroseconds(10);
     digitalWrite(TriggerPin, LOW);
 
-    duration = pulseIn(EchoPin, HIGH);  //medimos el tiempo entre pulsos, en microsegundos
+    duration = pulseIn(EchoPin, HIGH);      // Time between pulses in ms
 
-    distanceCm = duration * 10 / 292/ 2;   //convertimos a distancia, en cm
+    distanceCm = duration * 10 / 292/ 2;    // Convert distance to cm
     return distanceCm;
 }
