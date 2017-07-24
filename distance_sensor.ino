@@ -13,6 +13,8 @@ const uint8_t EchoPin_size = sizeof(EchoPin) / sizeof(EchoPin[0]);
 const uint8_t TriggerPin_size = sizeof(TriggerPin) / sizeof(TriggerPin[0]);
 const uint8_t Orientation_size = sizeof(Orientation) / sizeof(Orientation[0]);
 
+bool LedStatus = 0;
+
 void setup() {
     pinMode(LedPin, OUTPUT);
     for (uint8_t i = 0; i < EchoPin_size and i < TriggerPin_size; ++i) {
@@ -26,6 +28,8 @@ void setup() {
 
 void loop() {
     /*command_heartbeat();*/
+    digitalWrite(LedPin, ((LedStatus)? LOW : HIGH));
+    LedStatus^=1;
     for (uint8_t i = 0; i < EchoPin_size and i < TriggerPin_size and i < Orientation_size; ++i) {
         uint16_t distance = ping(TriggerPin[i], EchoPin[i]);
         send_distance(distance, Orientation[i]); 
