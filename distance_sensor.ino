@@ -29,8 +29,9 @@ void loop() {
     for (uint8_t i = 0; i < EchoPin_size and i < TriggerPin_size and i < Orientation_size; ++i) {
         uint16_t distance = ping(TriggerPin[i], EchoPin[i]);
         send_distance(distance, Orientation[i]); 
-        delay(1000); // TODO: delay outside the loop?
+        delay(50); // 10 meters -> 30 ms
     }
+    delay(300); // 50ms*4 + 300ms = 0.5s
 }
 
 /************************************************************
