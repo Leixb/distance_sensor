@@ -1,7 +1,7 @@
-//include the mavlink library
+// Include the mavlink library
 #include "./libraries/mavlink.h"
 
-//Baudrate
+// Baudrate
 #define bRate 115200
 
 // TODO: 4 different ultrasonic sensor pins
@@ -14,8 +14,6 @@ const uint8_t EchoPin_size = sizeof(EchoPin) / sizeof(EchoPin[0]);
 const uint8_t TriggerPin_size = sizeof(TriggerPin) / sizeof(TriggerPin[0]);
 const uint8_t Orientation_size = sizeof(Orientation) / sizeof(Orientation[0]);
 
-//TODO: heartbeat needed?
-
 void setup() {
     pinMode(LedPin, OUTPUT);
     for (uint8_t i = 0; i < EchoPin_size and i < TriggerPin_size; ++i) {
@@ -24,6 +22,8 @@ void setup() {
     }
     Serial.begin(bRate);
 }
+
+// TODO: heartbeat needed?
 
 void loop() {
     /*command_heartbeat();*/
@@ -42,12 +42,12 @@ void loop() {
 
 void command_heartbeat() {
 
-    //< ID 1 for this system
+    // ID 1 for this system
     int system_id = 1;
-    //< The component sending the message.
+    // The component sending the message.
     int component_id = MAV_COMP_ID_PERIPHERAL;
 
-    // Define the system type, in this case ground control station
+    // Define the system type
     uint8_t     type            = MAV_TYPE_GCS;
     uint8_t     autopilot       = MAV_AUTOPILOT_INVALID;
 
