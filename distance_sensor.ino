@@ -29,7 +29,7 @@ void loop() {
     for (uint8_t i = 0; i < EchoPin_size and i < TriggerPin_size and i < Orientation_size; ++i) {
         uint16_t distance = ping(TriggerPin[i], EchoPin[i]);
         command_distance(distance, Orientation[i]); 
-        delay(1000);
+        delay(1000); // TODO: delay outside the loop?
     }
 }
 
@@ -39,6 +39,7 @@ void loop() {
  * @return void
  *************************************************************/
 
+/*
 void command_heartbeat() {
 
     // ID 1 for this system
@@ -67,7 +68,7 @@ void command_heartbeat() {
 
     // Send the message 
     Serial.write(buf, len);
-}
+}*/
 
 /************************************************************
  * @brief Sends distance command
