@@ -28,7 +28,7 @@ void loop() {
     /*command_heartbeat();*/
     for (uint8_t i = 0; i < EchoPin_size and i < TriggerPin_size and i < Orientation_size; ++i) {
         uint16_t distance = ping(TriggerPin[i], EchoPin[i]);
-        command_distance(distance, Orientation[i]); 
+        send_distance(distance, Orientation[i]); 
         delay(1000); // TODO: delay outside the loop?
     }
 }
@@ -77,7 +77,7 @@ void command_heartbeat() {
  * @return void
  *************************************************************/
 
-void command_distance(const uint16_t& current_distance, const MAV_SENSOR_ORIENTATION& orientation) {
+void send_distance(const uint16_t& current_distance, const MAV_SENSOR_ORIENTATION& orientation) {
 
     // Target drone id
     const uint8_t   system_id       = 1;
