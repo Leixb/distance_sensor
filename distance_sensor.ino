@@ -4,10 +4,9 @@
 // Baudrate
 #define bRate 115200
 
-// TODO: 4 different ultrasonic sensor pins
-const uint8_t EchoPin[] = {5};
-const uint8_t TriggerPin[] = {6};
-const MAV_SENSOR_ORIENTATION Orientation[] = {MAV_SENSOR_ROTATION_NONE, MAV_SENSOR_ROTATION_YAW_90, MAV_SENSOR_ROTATION_YAW_180, MAV_SENSOR_ROTATION_YAW_270};
+const uint8_t EchoPin[]                     = {2,                        4,                          6,                           8};
+const uint8_t TriggerPin[]                  = {3,                        5,                          7,                           9};
+const MAV_SENSOR_ORIENTATION Orientation[]  = {MAV_SENSOR_ROTATION_NONE, MAV_SENSOR_ROTATION_YAW_90, MAV_SENSOR_ROTATION_YAW_180, MAV_SENSOR_ROTATION_YAW_270};
 const uint8_t LedPin = 13;
 
 const uint8_t EchoPin_size = sizeof(EchoPin) / sizeof(EchoPin[0]);
