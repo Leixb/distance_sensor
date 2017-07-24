@@ -5,26 +5,33 @@
 #define bRate 115200
 
 // TODO: 4 different ultrasonic sensor pins
-const uint8_t EchoPin = 5;
-const uint8_t TriggerPin = 6;
+const uint8_t EchoPin[] = {5};
+const uint8_t TriggerPin[] = {6};
+const MAV_SENSOR_ORIENTATION Orientation[] = {MAV_SENSOR_ROTATION_NONE, MAV_SENSOR_ROTATION_YAW_90, MAV_SENSOR_ROTATION_YAW_180, MAV_SENSOR_ROTATION_YAW_270};
 const uint8_t LedPin = 13;
+
+const uint8_t EchoPin_size = sizeof(EchoPin) / sizeof(EchoPin[0]);
+const uint8_t TriggerPin_size = sizeof(TriggerPin) / sizeof(TriggerPin[0]);
+const uint8_t Orientation_size = sizeof(Orientation) / sizeof(Orientation[0]);
 
 //TODO: heartbeat needed?
 
 void setup() {
-    // TODO: initialize missing analog ports for reading
     pinMode(LedPin, OUTPUT);
-    pinMode(TriggerPin, OUTPUT);
-    pinMode(EchoPin, INPUT);
+    for (uint8_t i = 0; i < EchoPin_size and i < TriggerPin_size; ++i) {
+        pinMode(TriggerPin[i], OUTPUT);
+        pinMode(EchoPin[i], INPUT);
+    }
     Serial.begin(bRate);
 }
 
 void loop() {
     /*command_heartbeat();*/
-    uint16_t distance = ping(TriggerPin, EchoPin);
-    command_distance(distance, MAV_SENSOR_ROTATION_NONE); 
-    // TODO: send distance for all 4 orientations
-    delay(1000);
+    for (uint8_t i = 0; i < EchoPin_size and i < TriggerPin_size and i < Orientation_size; ++i) {
+        uint16_t distance = ping(TriggerPin[i], EchoPin[i]);
+        command_distance(distance, Orientation[i]); 
+        delay(1000);
+    }
 }
 
 /************************************************************
