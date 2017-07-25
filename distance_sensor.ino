@@ -4,8 +4,13 @@
 // Baudrate
 #define bRate 115200
 
-const uint8_t EchoPin[]                     = {2,                        4,                          6,                           8};
-const uint8_t TriggerPin[]                  = {3,                        5,                          7,                           9};
+// ID of this system
+#define SYSTEM_ID 125
+// ID of this component
+#define COMPONENT_ID MAV_COMP_ID_PERIPHERAL
+
+const uint8_t EchoPin[]                     = {2};//,                        4,                          6,                           8};
+const uint8_t TriggerPin[]                  = {3};//,                        5,                          7,                           9};
 const MAV_SENSOR_ORIENTATION Orientation[]  = {MAV_SENSOR_ROTATION_NONE, MAV_SENSOR_ROTATION_YAW_90, MAV_SENSOR_ROTATION_YAW_180, MAV_SENSOR_ROTATION_YAW_270};
 const uint8_t LedPin = 13;
 
@@ -27,30 +32,25 @@ void setup() {
 // TODO: heartbeat needed?
 
 void loop() {
-    /*command_heartbeat();*/
+    send_heartbeat();
     digitalWrite(LedPin, ((LedStatus)? LOW : HIGH));
-    LedStatus^=1;
     for (uint8_t i = 0; i < EchoPin_size and i < TriggerPin_size and i < Orientation_size; ++i) {
         uint16_t distance = ping(TriggerPin[i], EchoPin[i]);
         send_distance(distance, Orientation[i]); 
         delay(50); // 10 meters -> 30 ms
+        LedStatus^=1;
     }
-    delay(300); // 50ms*4 + 300ms = 0.5s
+    delay(800); // 50ms*4 + 300ms = 1.0s
 }
 
 /************************************************************
- * @brief Sends a heartbeat message every second.
+ * @brief Sends a heartbeat message
  * @param NONE
  * @return void
  *************************************************************/
 
-/*
-void command_heartbeat() {
 
-    // ID 1 for this system
-    int system_id = 1;
-    // The component sending the message.
-    int component_id = MAV_COMP_ID_PERIPHERAL;
+void send_heartbeat() {
 
     // Define the system type
     uint8_t     type            = MAV_TYPE_GCS;
@@ -65,7 +65,7 @@ void command_heartbeat() {
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 
     // Pack the message
-    mavlink_msg_heartbeat_pack(system_id, component_id, &msg, type, autopilot, \
+    mavlink_msg_heartbeat_pack(SYSTEM_ID, COMPONENT_ID, &msg, type, autopilot, \
             base_mode, custom_mode, system_status);
 
     // Copy the message to the send buffer
@@ -73,7 +73,7 @@ void command_heartbeat() {
 
     // Send the message 
     Serial.write(buf, len);
-}*/
+}
 
 /************************************************************
  * @brief Sends distance command
@@ -83,11 +83,6 @@ void command_heartbeat() {
  *************************************************************/
 
 void send_distance(const uint16_t& current_distance, const MAV_SENSOR_ORIENTATION& orientation) {
-
-    // Target drone id
-    const uint8_t   system_id       = 1;
-    // Target component
-    const uint8_t   component_id    = MAV_COMP_ID_PATHPLANNER;
 
     // Time since system boot
     const uint32_t  time_boot_ms    = millis();
@@ -115,7 +110,7 @@ void send_distance(const uint16_t& current_distance, const MAV_SENSOR_ORIENTATIO
     uint8_t buf[MAVLINK_MAX_PACKET_LEN];
 
     // Pack the message
-    mavlink_msg_distance_sensor_pack(system_id, component_id, &msg, \
+    mavlink_msg_distance_sensor_pack(SYSTEM_ID, COMPONENT_ID, &msg, \
             time_boot_ms, min_distance, max_distance, \
             current_distance, type, id, orientation, covariance);
 
