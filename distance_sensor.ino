@@ -5,24 +5,29 @@
 #define bRate 115200
 
 // ID of this system
-#define SYSTEM_ID 125
+#define SYSTEM_ID 1
 // ID of this component
 #define COMPONENT_ID MAV_COMP_ID_PERIPHERAL
 
-const uint8_t EchoPin[]                     = {2};//,                        4,                          6,                           8};
-const uint8_t TriggerPin[]                  = {3};//,                        5,                          7,                           9};
+const uint8_t                EchoPin[]      = {2};//,                        4,                          6,                           8};
+const uint8_t                TriggerPin[]   = {3};//,                        5,                          7,                           9};
 const MAV_SENSOR_ORIENTATION Orientation[]  = {MAV_SENSOR_ROTATION_NONE, MAV_SENSOR_ROTATION_YAW_90, MAV_SENSOR_ROTATION_YAW_180, MAV_SENSOR_ROTATION_YAW_270};
+
 const uint8_t LedPin = 13;
 
-const uint8_t EchoPin_size = sizeof(EchoPin) / sizeof(EchoPin[0]);
-const uint8_t TriggerPin_size = sizeof(TriggerPin) / sizeof(TriggerPin[0]);
-const uint8_t Orientation_size = sizeof(Orientation) / sizeof(Orientation[0]);
+#define EchoPin_size        (sizeof(EchoPin) / sizeof(EchoPin[0]))
+#define TriggerPin_size     (sizeof(TriggerPin) / sizeof(TriggerPin[0]))
+#define Orientation_size    (sizeof(Orientation) / sizeof(Orientation[0]))
+
+const uint8_t Size = min(min(EchoPin_size,TriggerPin_size),Orientation_size);
 
 bool LedStatus = 0;
 
+uint8_t cont = 0;
+
 void setup() {
     pinMode(LedPin, OUTPUT);
-    for (uint8_t i = 0; i < EchoPin_size and i < TriggerPin_size; ++i) {
+    for (uint8_t i = 0; i < Size; ++i) {
         pinMode(TriggerPin[i], OUTPUT);
         pinMode(EchoPin[i], INPUT);
     }
@@ -32,15 +37,18 @@ void setup() {
 // TODO: heartbeat needed?
 
 void loop() {
-    send_heartbeat();
-    for (uint8_t i = 0; i < EchoPin_size and i < TriggerPin_size and i < Orientation_size; ++i) {
+    if (cont >= 20) {
+        send_heartbeat(); // 1 Hz
+        cont = 0;
+        LedStatus^=1;
+    }
+    for (uint8_t i = 0; i < Size; ++i) {
         uint16_t distance = ping(TriggerPin[i], EchoPin[i]);
         send_distance(distance, Orientation[i]); 
-        delay(50); // 10 meters -> 30 ms
-        LedStatus^=1;
-        digitalWrite(LedPin, ((LedStatus)? LOW : HIGH));
+        if (!cont and !i) digitalWrite(LedPin, ((LedStatus)? LOW : HIGH));
     }
-    delay(800); // 50ms*4 + 300ms = 1.0s
+    ++cont;
+    delay(50); // 20 Hz
 }
 
 /************************************************************
@@ -128,7 +136,6 @@ void send_distance(const uint16_t& current_distance, const MAV_SENSOR_ORIENTATIO
  *************************************************************/
 
 uint16_t ping(const uint8_t& TriggerPin, const uint8_t& EchoPin) {
-    unsigned long duration;
 
     // To generate a clean pulse we put LOW during 4us
     digitalWrite(TriggerPin, LOW);
@@ -138,8 +145,7 @@ uint16_t ping(const uint8_t& TriggerPin, const uint8_t& EchoPin) {
     delayMicroseconds(10);
     digitalWrite(TriggerPin, LOW);
 
-    // Time between pulses in ms
-    duration = pulseIn(EchoPin, HIGH);
+    // pulseIn -> Time between pulses in ms
 
-    return (duration * 5)/292; // Convert distance to cm (10/292/2)
+    return (pulseIn(EchoPin, HIGH)* 5)/292; // Convert distance to cm (10/292/2)
 }
