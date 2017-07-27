@@ -33,12 +33,12 @@ void setup() {
 
 void loop() {
     send_heartbeat();
-    digitalWrite(LedPin, ((LedStatus)? LOW : HIGH));
     for (uint8_t i = 0; i < EchoPin_size and i < TriggerPin_size and i < Orientation_size; ++i) {
         uint16_t distance = ping(TriggerPin[i], EchoPin[i]);
         send_distance(distance, Orientation[i]); 
         delay(50); // 10 meters -> 30 ms
         LedStatus^=1;
+        digitalWrite(LedPin, ((LedStatus)? LOW : HIGH));
     }
     delay(800); // 50ms*4 + 300ms = 1.0s
 }
