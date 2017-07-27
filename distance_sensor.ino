@@ -13,20 +13,18 @@ const uint8_t                EchoPin[]      = {2};//,                        4, 
 const uint8_t                TriggerPin[]   = {3};//,                        5,                          7,                           9};
 const MAV_SENSOR_ORIENTATION Orientation[]  = {MAV_SENSOR_ROTATION_NONE, MAV_SENSOR_ROTATION_YAW_90, MAV_SENSOR_ROTATION_YAW_180, MAV_SENSOR_ROTATION_YAW_270};
 
-const uint8_t LedPin = 13;
-
 #define EchoPin_size        (sizeof(EchoPin) / sizeof(EchoPin[0]))
 #define TriggerPin_size     (sizeof(TriggerPin) / sizeof(TriggerPin[0]))
 #define Orientation_size    (sizeof(Orientation) / sizeof(Orientation[0]))
 
 const uint8_t Size = min(min(EchoPin_size,TriggerPin_size),Orientation_size);
 
-bool LedStatus = 0;
-
-uint8_t cont = 0;
+bool LedStatus;
+uint8_t cont;
 
 void setup() {
-    pinMode(LedPin, OUTPUT);
+    LedStatus = cont = 0;
+    pinMode(LED_BUILTIN, OUTPUT);
     for (uint8_t i = 0; i < Size; ++i) {
         pinMode(TriggerPin[i], OUTPUT);
         pinMode(EchoPin[i], INPUT);
@@ -37,17 +35,17 @@ void setup() {
 // TODO: heartbeat needed?
 
 void loop() {
-    if (cont >= 20) {
+    for (uint8_t i = 0; i < Size; ++i) {
+        uint16_t distance = ping(TriggerPin[i], EchoPin[i]);
+        send_distance(distance, Orientation[i]); 
+        if (!cont and !i) digitalWrite(LED_BUILTIN, ((LedStatus)? LOW : HIGH));
+    }
+    ++cont;
+    if (cont > 20) {
         send_heartbeat(); // 1 Hz
         cont = 0;
         LedStatus^=1;
     }
-    for (uint8_t i = 0; i < Size; ++i) {
-        uint16_t distance = ping(TriggerPin[i], EchoPin[i]);
-        send_distance(distance, Orientation[i]); 
-        if (!cont and !i) digitalWrite(LedPin, ((LedStatus)? LOW : HIGH));
-    }
-    ++cont;
     delay(50); // 20 Hz
 }
 
@@ -56,7 +54,6 @@ void loop() {
  * @param NONE
  * @return void
  *************************************************************/
-
 
 void send_heartbeat() {
 
